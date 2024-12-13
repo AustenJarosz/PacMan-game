@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Random;
 import javax.swing.*;
 
-public class PacMan extends JPanel{
+public class PacMan extends JPanel implements ActionListener, KeyListener{
     class Block{
         int x;
         int y;
@@ -14,6 +14,9 @@ public class PacMan extends JPanel{
 
         int startX;
         int startY;
+        char direction = 'U';
+        int velocityX = 0;
+        int velocityY = 0;
 
         Block(Image image, int x, int y, int width, int height){
             this.image = image;
@@ -23,6 +26,21 @@ public class PacMan extends JPanel{
             this.height = height;
             this.startX = x;
             this.startY = y;
+        }
+
+        void updateDirection(char direction){
+            this.direction = direction;
+            updateVelocity();
+        }
+        void updateVelocity(){
+            if(this.direction == 'U'){
+                this.velocityX = 0;
+                this.velocityY = -tileSize/4;
+            }
+            else if (this.direction == 'D'){
+                this.velocityX = 0;
+                this.velocityX = tileSize/4;
+            }
         }
     }
     private int rowCount = 21;
@@ -73,6 +91,8 @@ public class PacMan extends JPanel{
     HashSet<Block> ghosts;
     Block pacman;
 
+    Timer gameLoop;
+
 
     PacMan(){
         setPreferredSize(new Dimension(boardWidth, boardHeight));
@@ -91,9 +111,10 @@ public class PacMan extends JPanel{
         pacmanRightImage = new ImageIcon(getClass().getResource("./pacmanRight.png")).getImage();
 
         loadmap();
-        System.out.println(walls.size());
-        System.out.println(foods.size());
-        System.out.println(ghosts.size());
+        gameLoop = new Timer(50, this);
+        gameLoop.start();
+        addKeyListener(this);
+        setFocusable(true);
         
     }
     
@@ -175,5 +196,21 @@ public class PacMan extends JPanel{
 
             }
         }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            repaint();
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            System.out.println("key pressed: " + e.getKeyCode());
+        }
+
+        @Override
+        public void keyTyped(KeyEvent e) {}
+
+        @Override
+        public void keyReleased(KeyEvent e) {}
     }
 
